@@ -1,16 +1,22 @@
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+import datetime
 
 text = ''
 
-data = open ("C:\\Users\\Boxitsoft1\\Documents\\Python\\STATSRTM2\\data.csv","r")
+if (len(sys.argv) == 1):
+        print ("missing argument: data path")
+        exit()
+
+dataSource = open (sys.argv[1],"r")
 
 listLevels = []
 
 x = 0
 
-for line in data:
+for line in dataSource:
         if (x == 0):
                 if (re.match('Custom parameter,Event count*',line)):
                         x = 1
@@ -21,7 +27,7 @@ for line in data:
                 n = set(map(int,n))
                 listLevels.append(sorted(n))
                 
-data.close()
+dataSource.close()
 
 finalData = np.array(listLevels)
 
@@ -31,15 +37,36 @@ def getInitPerLevel(data):
         a = [(data[0],data[2] / data[1])]
         return a
 
-vidasPorLevel = []
+livesperlevel = []
 
 for val in finalData:
-        vidasPorLevel.append(getInitPerLevel(val))
-vidasPorLevel = np.array(vidasPorLevel)
+        livesperlevel.append(getInitPerLevel(val))
 
-print("Datos finales:")
-print(finalData)
-print ("VIDAS POR NIVEL")
-print(vidasPorLevel)
+
+livesperlevel = np.array(livesperlevel)
+
+def calculatePlot(data):
+        t = np.arange(0,30,1)
+        x = []
+        for i in data:
+                 x.append(i[2] / i[1])
+        return x
+
+s = np.array(calculatePlot(finalData))
+
+def ShowPlot():
+        plt.xlabel = "niveles"
+        plt.ylabel="dificultad"
+        plt.plot(s,color='red', marker='o',
+                 linestyle='dashed', linewidth=2, markersize=5)
+        plt.grid(True)
+        plt.savefig(datetime.datetime.today().strftime("%d-%m-%Y")+".png")
+        plt.show()
+               
+        
+
+
+print ("finalData for original array of data.\n livesPerLevel to calculate how many lives takes each level")
+
 
 
