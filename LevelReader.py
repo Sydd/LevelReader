@@ -6,11 +6,12 @@ import datetime
 
 text = ''
 
-if (len(sys.argv) == 1):
-        print ("missing argument: data path")
-        exit()
 
-dataSource = open (sys.argv[1],"r")
+if (len(sys.argv) == 1):
+    print ("missing argument: data path")
+    dataSource = open(r'C:\Users\Boxitsoft1\Downloads\data-export.csv','r')
+else:
+    dataSource = open (sys.argv[1],"r")
 
 listLevels = []
 
@@ -19,20 +20,22 @@ x = 0
 for line in dataSource:
         if (x == 0):
                 if (re.match('Custom parameter,Event count*',line)):
-                        x = 1
+                    x = 1
         else:
                 n = re.split(',',line )
-                if (len(n) < 2 or re.match('[^0-9]',line)):
+                if (len(n) < 2 or re.match('#',line)):
+                        print('Se encontro el fin de los datos buscados')
                         break
+                n[0] = re.sub('[^0-9]','',n[0])
+
                 n = set(map(int,n))
                 listLevels.append(sorted(n))
-                
 dataSource.close()
 
 finalData = np.array(listLevels)
 
+print(finalData)
 finalData = finalData[finalData[:,0].argsort()] 
-
 def getInitPerLevel(data):
         a = [(data[0],data[2] / data[1])]
         return a
@@ -66,7 +69,7 @@ def ShowPlot():
         
 
 
-print ("finalData for original array of data.\n livesPerLevel to calculate how many lives takes each level")
+print ("finalData for original array of data.\n livesperlevel to calculate how many lives takes each level")
 
 
 
